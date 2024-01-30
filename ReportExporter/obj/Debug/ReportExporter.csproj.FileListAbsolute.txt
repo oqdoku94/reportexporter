@@ -1,0 +1,14 @@
+D:\Projects\ReportExporter\ReportExporter\bin\Debug\ReportExporter.exe.config
+D:\Projects\ReportExporter\ReportExporter\bin\Debug\ReportExporter.exe
+D:\Projects\ReportExporter\ReportExporter\bin\Debug\ReportExporter.pdb
+D:\Projects\ReportExporter\ReportExporter\obj\Debug\ReportExporter.csproj.AssemblyReference.cache
+D:\Projects\ReportExporter\ReportExporter\obj\Debug\ReportExporter.Properties.Resources.resources
+D:\Projects\ReportExporter\ReportExporter\obj\Debug\ReportExporter.csproj.GenerateResource.cache
+D:\Projects\ReportExporter\ReportExporter\obj\Debug\ReportExporter.csproj.CoreCompileInputs.cache
+D:\Projects\ReportExporter\ReportExporter\obj\Debug\ReportExporter.exe
+D:\Projects\ReportExporter\ReportExporter\obj\Debug\ReportExporter.pdb
+D:\Projects\ReportExporter\ReportExporter\obj\Debug\ReportExporter.MainForm.resources
+D:\Projects\ReportExporter\ReportExporter\obj\Debug\ReportExporter.SettingsForm.resources
+D:\Projects\ReportExporter\ReportExporter\bin\Debug\Newtonsoft.Json.dll
+D:\Projects\ReportExporter\ReportExporter\bin\Debug\Newtonsoft.Json.xml
+D:\Projects\ReportExporter\ReportExporter\obj\Debug\ReportExporter.csproj.CopyComplete
