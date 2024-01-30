@@ -7,6 +7,15 @@
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				components?.Dispose();
+			}
+			base.Dispose(disposing);
+		}
+
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -22,6 +31,7 @@
 			this.ExportButton = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.RecordsCountLabel = new System.Windows.Forms.Label();
+			this.InputFileWorker = new System.ComponentModel.BackgroundWorker();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -85,6 +95,7 @@
 			this.label1.Size = new System.Drawing.Size(80, 13);
 			this.label1.TabIndex = 3;
 			this.label1.Text = "Records found:";
+			this.label1.Visible = false;
 			// 
 			// RecordsCountLabel
 			// 
@@ -95,6 +106,11 @@
 			this.RecordsCountLabel.Size = new System.Drawing.Size(13, 13);
 			this.RecordsCountLabel.TabIndex = 4;
 			this.RecordsCountLabel.Text = "0";
+			this.RecordsCountLabel.Visible = false;
+			// 
+			// InputFileWorker
+			// 
+			this.InputFileWorker.WorkerSupportsCancellation = true;
 			// 
 			// MainForm
 			// 
@@ -113,7 +129,6 @@
 			this.MinimizeBox = false;
 			this.Name = "MainForm";
 			this.Text = "Report Exporter";
-			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
 			this.ResumeLayout(false);
@@ -129,6 +144,7 @@
 		private System.Windows.Forms.Button ExportButton;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label RecordsCountLabel;
+		private System.ComponentModel.BackgroundWorker InputFileWorker;
 	}
 }
 

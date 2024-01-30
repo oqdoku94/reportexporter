@@ -1,232 +1,281 @@
-﻿using Microsoft.VisualBasic.ApplicationServices;
-using Microsoft.VisualBasic.FileIO;
-using ReportExporter.DAO;
-using ReportExporter.Managers;
-using ReportExporter.Model;
+﻿using Newtonsoft.Json;
 using ReportExporter.Models;
 using ReportExporter.Utils;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml.Serialization;
 
 namespace ReportExporter.Handlers
 {
-	internal class FileHandler : IDisposable
+	internal class FileHandler
 	{
 		private const string XML_FILE_EXTENSION = ".xml";
 		private const string CSV_FILE_EXTENSION = ".csv";
 
-		private readonly FileManager _xmlFileManager;
-		private readonly FileManager _csvFileManager;
-		private readonly FileScanner _xmlFileScanner;
-		private readonly FileScanner _csvFileScanner;
-
+		private readonly ConcurrentDictionary<string, InputFile> _inputFiles = new ConcurrentDictionary<string, InputFile>();
 		private readonly string _folderToScan;
-		private bool _inWaitProcess = false;
 
-		internal event EventHandler<LogInformationEventArgs> OnWriteSystemInformation;
-		internal event EventHandler<FilePairFoundEventArgs> OnFilePairFound;
+		private FileSystemWatcher _watcher;
 
 		internal FileHandler(string folderToScan)
 		{
 			_folderToScan = folderToScan;
-
-			_xmlFileManager = new FileManager();
-			_csvFileManager = new FileManager();
-
-			_xmlFileScanner = new FileScanner(_xmlFileManager, this);
-			_csvFileScanner = new FileScanner(_csvFileManager, this);
-
 			RuntimeInitialize();
 		}
 
 		private void RuntimeInitialize()
 		{
-			var existsXmlFiles = GetFilesFromDirectory($"*{XML_FILE_EXTENSION}");
-			_xmlFileManager.AddRange(existsXmlFiles);
-			_xmlFileScanner.StartWatch(_folderToScan, XML_FILE_EXTENSION);
-
-			var existsCsvFiles = GetFilesFromDirectory($"*{CSV_FILE_EXTENSION}");
-			_csvFileManager.AddRange(existsCsvFiles);
-			_csvFileScanner.StartWatch(_folderToScan, CSV_FILE_EXTENSION);
+			AddInputFiles();
+			AddFileSystemWatcher();
 		}
 
-		public void HandleExistsFiles()
-		{
-			_inWaitProcess = false;
-			if (!_xmlFileManager.GetAllFiles().Any() || !_csvFileManager.GetAllFiles().Any())
-				return;
-
-			for (int i = 0; i < _xmlFileManager.GetAllFiles().Count(); i++)
-				Handle(_xmlFileManager.GetAllFiles()[i]);
-		}
-
-		private IEnumerable<string> GetFilesFromDirectory(string searchPattern)
+		private void AddInputFiles()
 		{
 			if (!Directory.Exists(_folderToScan))
-				return Enumerable.Empty<string>();
+				return;
 
-			return Directory.GetFiles(_folderToScan, searchPattern, System.IO.SearchOption.AllDirectories);
+			foreach (var file in Directory.GetFiles(_folderToScan, "*", SearchOption.TopDirectoryOnly))
+				AddFile(file);
 		}
 
-		internal void Handle(string filePath)
-		{
-			if (!_inWaitProcess)
-			{
-				OnWriteSystemInformation?.Invoke(this, new LogInformationEventArgs() { Message = $"Processing file: \"{filePath}\"..." });
-
-				switch (Path.GetExtension(filePath).ToLower())
-				{
-					case XML_FILE_EXTENSION:
-						HandleXml(filePath);
-						break;
-					case CSV_FILE_EXTENSION:
-						break;
-					default:
-						OnWriteSystemInformation?.Invoke(this, new LogInformationEventArgs() { Message = $"No handler registered for file: \"{filePath}\"." });
-						break;
-				}
-
-				OnWriteSystemInformation?.Invoke(this, new LogInformationEventArgs() { Message = $"File: \"{filePath}\" handeled." });
-			}
-		}
-
-		private void HandleXml(string filePath)
+		private void AddFile(string filePath)
 		{
 			if (!File.Exists(filePath))
 				return;
 
-			var xmlObj = DeserializeXmlFile(filePath);
-			var xmlObjIds = xmlObj.CardList
-				.Select(card => card.UserId)
-				.Distinct();
+			var currentFileExtension = Path.GetExtension(filePath).ToLower();
 
-			for(int i = 0; i < _csvFileManager.GetAllFiles().Count; i++)
+			if (currentFileExtension != XML_FILE_EXTENSION && currentFileExtension != CSV_FILE_EXTENSION)
+				return;
+
+			var existsInputFile = _inputFiles.Values.FirstOrDefault(file => file.Path == filePath);
+			if (existsInputFile != null)
 			{
-				var csvFile = _csvFileManager.GetAllFiles()[i];
-				var csvObj = DeserializeCSVFile(csvFile);
-				var csvObjIds = csvObj.Select(obj => obj.UserId)
-					.Distinct();
-
-				var intersectedIds = csvObjIds.Intersect(xmlObjIds);
-				if (intersectedIds.Any())
-				{
-					var users = GetUser(xmlObj, csvObj, intersectedIds);
-
-					OnFilePairFound?.Invoke(this, new FilePairFoundEventArgs() { Users = users });
-
-					_csvFileManager.RemoveFile(csvFile);
-					_xmlFileManager.RemoveFile(filePath);
-
-					_inWaitProcess = true;
-					break;
-				}
+				existsInputFile.State = InputFileStateEnum.Created;
+				return;
 			}
+
+			var inputFile = new InputFile()
+			{
+
+				Extension = currentFileExtension,
+				Path = filePath,
+				State = InputFileStateEnum.Created,
+			};
+			_inputFiles.TryAdd(filePath, inputFile);
 		}
 
-		private IEnumerable<Models.User> GetUser(Cards xmlObj, IEnumerable<CSVUserData> csvObj, IEnumerable<string> ids)
+		private void AddFileSystemWatcher()
 		{
-			List<Models.User> users = new List<Models.User>();
+			_watcher = new FileSystemWatcher(_folderToScan);
+			_watcher.Created += OnCreated;
+			_watcher.Deleted += OnDeleted;
+			_watcher.Changed += OnChanged;
 
-			foreach(var id in ids)
+			_watcher.EnableRaisingEvents = true;
+		}
+
+		private void OnChanged(object sender, FileSystemEventArgs e)
+		{
+			var currentInputFile = _inputFiles.Values.FirstOrDefault(inputFile => inputFile.Path == e.FullPath);
+
+			if (currentInputFile == null)
+				return;
+
+			if (currentInputFile.State == InputFileStateEnum.Loaded)
+				return;
+
+			currentInputFile.State = InputFileStateEnum.Changed;
+		}
+
+		private void OnDeleted(object sender, FileSystemEventArgs e)
+		{
+			var currentInputFile = _inputFiles.Values.FirstOrDefault(inputFile => inputFile.Path == e.FullPath);
+
+			if (currentInputFile == null)
+				return;
+
+			currentInputFile.State = InputFileStateEnum.Deleted;
+		}
+
+		private void OnCreated(object sender, FileSystemEventArgs e)
+		{
+			AddFile(e.FullPath);
+		}
+
+		internal Tuple<int, string> HandleNext(out string filePath)
+		{
+			var file = _inputFiles.Values.FirstOrDefault(inputFile => inputFile.State == InputFileStateEnum.Created || inputFile.State == InputFileStateEnum.Changed);
+			filePath = null;
+
+			if (file == null)
+				return null;
+
+			filePath = file.Path;
+			var resultObj = HandleFile(file);
+
+			if (resultObj.Any())
+				return new Tuple<int, string>(resultObj.Count(), JsonConvert.SerializeObject(resultObj));
+
+			return null;
+        }
+
+		private IEnumerable<Models.User> HandleFile(InputFile file)
+		{
+			IEnumerable<Models.User> users = Enumerable.Empty<Models.User>();
+
+			try
 			{
-				if (!long.TryParse(id, out var userId))
-					continue;
-
-				var currentXmlObj = xmlObj.CardList.FirstOrDefault(obj => obj.UserId == id);
-
-				if (currentXmlObj == null)
-					continue;
-
-				var currentCsvObj = csvObj.FirstOrDefault(obj => obj.UserId == id);
-
-				if (currentCsvObj == null)
-					continue;
-
-				if (!long.TryParse(currentXmlObj.Pan, out var pen))
-					continue;
-
-				if (!DateTime.TryParseExact(currentXmlObj.ExpDate, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var expDate))
-					continue;
-
-				var user = new Models.User()
+				file.State = InputFileStateEnum.Checked;
+				switch (file.Extension)
 				{
-					UserId = userId,
-					Pen = pen,
-					ExpDate = expDate,
-					FirstName = currentCsvObj.Name,
-					LastName = currentCsvObj.SecondName,
-					Phone = currentCsvObj.Number
-				};
-
-				users.Add(user);
+					case XML_FILE_EXTENSION:
+						users = HandleXml(file);
+						break;
+					case CSV_FILE_EXTENSION:
+						users = HandleCsv(file);
+						break;
+				}
+			}
+			catch
+			{
+				file.State = InputFileStateEnum.Failed;
+				return Enumerable.Empty<Models.User>();
 			}
 
 			return users;
 		}
 
-		private Cards DeserializeXmlFile(string filePath)
+		private IEnumerable<Models.User> HandleXml(InputFile file)
 		{
-			try
-			{
-				XmlSerializer ser = new XmlSerializer(typeof(Cards));
+			if (!File.Exists(file.Path))
+				return Enumerable.Empty<Models.User>();
 
-				using (Stream fs = File.Open(filePath, FileMode.Open))
+			var xmlObj = Serializer.DeserializeXml<Cards>(file.Path);
+			var cards = xmlObj.CardList.ToDictionary(keyValue => keyValue.UserId);
+
+			var csvFiles = _inputFiles.Values.Where(inputFile => inputFile.Extension == CSV_FILE_EXTENSION
+										&& inputFile.State != InputFileStateEnum.Loaded
+										&& inputFile.State != InputFileStateEnum.Deleted
+										&& inputFile.State != InputFileStateEnum.Failed);
+
+			List<Models.User> users = new List<Models.User>();
+			foreach (var csvFile in csvFiles)
+			{
+				try
 				{
-					return (Cards)ser.Deserialize(fs);
-				}
-			}
-			catch
-			{
-				OnWriteSystemInformation?.Invoke(this, new LogInformationEventArgs() { Message = $"The file \"{filePath}\" contains an unknown data format." });
-				return new Cards();
-			}
-		}
+					if (!File.Exists(csvFile.Path))
+						continue;
 
-		private IEnumerable<CSVUserData> DeserializeCSVFile(string filePath)
-		{
-			try
-			{
-				List<CSVUserData> data = new List<CSVUserData>();
-				using (TextFieldParser textFieldParser = new TextFieldParser(filePath))
-				{
-					textFieldParser.TextFieldType = FieldType.Delimited;
-					textFieldParser.SetDelimiters(";");
+					var csvObjs = Serializer.DeserializeCSV(csvFile.Path);
+					var intersectionCsvList = csvObjs
+						.Where(obj => obj.Length == 4 && cards.ContainsKey(obj[0]));
 
-					int rowNumber = 0;
-					while (!textFieldParser.EndOfData)
+					if (intersectionCsvList.Any())
 					{
-						string[] cols = textFieldParser.ReadFields();
-						rowNumber++;
+						foreach (var csvObj in intersectionCsvList)
+						{
+							string userId = csvObj[0];
 
-						if (rowNumber == 1 || cols.Length != 4)
-							continue;
+							if (!long.TryParse(userId, out var longUserId))
+								continue;
 
-						data.Add(new CSVUserData 
-						{ 
-							UserId = cols[0], 
-							Name = cols[1], 
-							SecondName = cols[2], 
-							Number = cols[3] 
-						});
+							if (!long.TryParse(cards[userId].Pan, out var pen))
+								continue;
+
+							if (!DateTime.TryParseExact(cards[userId].ExpDate, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var expDate))
+								continue;
+
+							var user = new Models.User()
+							{
+								UserId = longUserId,
+								Pen = pen,
+								ExpDate = expDate,
+								FirstName = csvObj[1],
+								LastName = csvObj[2],
+								Phone = csvObj[3]
+							};
+
+							users.Add(user);
+						}
+
+						file.State = InputFileStateEnum.Loaded;
+						csvFile.State = InputFileStateEnum.Loaded;
+						return users;
 					}
 				}
-
-				return data;
-			} 
-			catch
-			{
-				OnWriteSystemInformation?.Invoke(this, new LogInformationEventArgs() { Message = $"The file \"{filePath}\" contains an unknown data format." });
-				return Enumerable.Empty<CSVUserData>();
+				catch
+				{
+					// IGNORE
+				}
 			}
+
+			return users;
 		}
 
-		public void Dispose()
+		private IEnumerable<Models.User> HandleCsv(InputFile file)
 		{
-			_xmlFileScanner?.Dispose();
-			_csvFileScanner?.Dispose();
+			if (!File.Exists(file.Path))
+				return Enumerable.Empty<Models.User>();
+
+			var csvObjs = Serializer.DeserializeCSV(file.Path);
+			var scvUserData = csvObjs.ToDictionary(obj => obj[0]);
+
+			var xmlFiles = _inputFiles.Values.Where(inputFile => inputFile.Extension == XML_FILE_EXTENSION
+										&& inputFile.State != InputFileStateEnum.Loaded
+										&& inputFile.State != InputFileStateEnum.Deleted);
+
+			List<Models.User> users = new List<Models.User>();
+			foreach (var xmlFile in xmlFiles)
+			{
+				try
+				{
+					if (!File.Exists(xmlFile.Path))
+						continue;
+
+					var xmlObjs = Serializer.DeserializeXml<Cards>(xmlFile.Path);
+					var intersectionXmlList = xmlObjs.CardList.Where(card => scvUserData.ContainsKey(card.UserId));
+
+					if (intersectionXmlList.Any())
+					{
+						foreach (var xmlObj in intersectionXmlList)
+						{
+							if (!long.TryParse(xmlObj.UserId, out var longUserId))
+								continue;
+
+							if (!long.TryParse(xmlObj.Pan, out var pen))
+								continue;
+
+							if (!DateTime.TryParseExact(xmlObj.ExpDate, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var expDate))
+								continue;
+
+							var user = new Models.User()
+							{
+								UserId = longUserId,
+								Pen = pen,
+								ExpDate = expDate,
+								FirstName = scvUserData[xmlObj.UserId][1],
+								LastName = scvUserData[xmlObj.UserId][2],
+								Phone = scvUserData[xmlObj.UserId][3]
+							};
+
+							users.Add(user);
+						}
+
+						file.State = InputFileStateEnum.Loaded;
+						xmlFile.State = InputFileStateEnum.Loaded;
+						return users;
+					}
+				}
+				catch
+				{
+					// IGNORE
+				}
+			}
+
+			return users;
 		}
 	}
 }
