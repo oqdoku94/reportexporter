@@ -72,22 +72,34 @@ namespace ReportExporter.Handlers
 			_watcher = new FileSystemWatcher(_folderToScan);
 			_watcher.Created += OnCreated;
 			_watcher.Deleted += OnDeleted;
-			_watcher.Changed += OnChanged;
+			_watcher.Renamed += OnRenamed; ;
+			//_watcher.Changed += OnChanged;
 
 			_watcher.EnableRaisingEvents = true;
 		}
 
+		private void OnRenamed(object sender, RenamedEventArgs e)
+		{
+			var currentInputFile = _inputFiles.Values.FirstOrDefault(inputFile => inputFile.Path == e.OldFullPath);
+			if (currentInputFile == null)
+				return;
+
+			currentInputFile.State = InputFileStateEnum.Deleted;
+			AddFile(e.FullPath);
+		}
+
 		private void OnChanged(object sender, FileSystemEventArgs e)
 		{
+			if (e.ChangeType != WatcherChangeTypes.Changed)
+				return;
+
 			var currentInputFile = _inputFiles.Values.FirstOrDefault(inputFile => inputFile.Path == e.FullPath);
 
 			if (currentInputFile == null)
 				return;
 
-			if (currentInputFile.State == InputFileStateEnum.Loaded)
-				return;
-
-			currentInputFile.State = InputFileStateEnum.Changed;
+			if (currentInputFile.State == InputFileStateEnum.Failed)
+				currentInputFile.State = InputFileStateEnum.Changed;
 		}
 
 		private void OnDeleted(object sender, FileSystemEventArgs e)
@@ -120,7 +132,7 @@ namespace ReportExporter.Handlers
 				return new Tuple<int, string>(resultObj.Count(), JsonConvert.SerializeObject(resultObj));
 
 			return null;
-        }
+		}
 
 		private IEnumerable<Models.User> HandleFile(InputFile file)
 		{

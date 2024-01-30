@@ -59,11 +59,15 @@ namespace ReportExporter
 			{
 				var result = _fileHandler.HandleNext(out var filePath);
 
+				if (!string.IsNullOrEmpty(filePath))
+				{
+					var matches = result != null ? result.Item1 : 0;
+					Log($"File: \"{filePath}\" handeled.");
+					Log($"Found \"{matches}\" matches.");
+				}
+
 				if (result != null)
 				{
-					Log($"File: \"{filePath}\" handeled.");
-					Log($"Found \"{result.Item1}\" matches.");
-
 					e.Result = result;
 					break;
 				}
@@ -78,8 +82,8 @@ namespace ReportExporter
 				return;
 			}
 
-			FileLoggerListBox.TopIndex = FileLoggerListBox.Items.Count - 1;
 			FileLoggerListBox.Items.Add($"[{DateTime.Now}] " + message);
+			FileLoggerListBox.TopIndex = FileLoggerListBox.Items.Count - 1;
 		}
 
 		//private void FileHandler_OnFilePairFound(object sender, Utils.FilePairFoundEventArgs e)
