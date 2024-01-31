@@ -7,22 +7,26 @@ namespace ReportExporter
 	public partial class SettingsForm : Form
 	{
 		private string _folderPathSettingCurrentValue;
+		private string _reportPathSettingCurrentValue;
 
 		public SettingsForm()
 		{
 			InitializeComponent();
 			_folderPathSettingCurrentValue = SettingsManager.Instance.Get(SettingsManager.FOLDER_SCAN_PATH_SETTING_KEY);
+			_reportPathSettingCurrentValue = SettingsManager.Instance.Get(SettingsManager.FOLDER_SAVE_PATH_SETTING_KEY);
 		}
 
 		private void SettingsForm_Load(object sender, EventArgs e)
 		{
 			folderPathTextBox.Text = _folderPathSettingCurrentValue;
-			folderPathTextBox.TextChanged += FolderPathTextBox_TextChanged;
+			folderPathTextBox.TextChanged += InputTextChanged;
+			reportPathTextBox.Text = _reportPathSettingCurrentValue;
+			reportPathTextBox.TextChanged += InputTextChanged;
 		}
 
-		private void FolderPathTextBox_TextChanged(object sender, EventArgs e)
+		private void InputTextChanged(object sender, EventArgs e)
 		{
-			if (folderPathTextBox.Text != _folderPathSettingCurrentValue)
+			if (folderPathTextBox.Text != _folderPathSettingCurrentValue || reportPathTextBox.Text != _reportPathSettingCurrentValue)
 			{
 				SaveButton.Enabled = true;
 				return;
@@ -38,7 +42,13 @@ namespace ReportExporter
 				DialogResult result = folderDialog.ShowDialog();
 				if (result == DialogResult.OK) // Test result.
 				{
-					folderPathTextBox.Text = folderDialog.SelectedPath;
+					if (sender == selectPathButton)
+					{
+						folderPathTextBox.Text = folderDialog.SelectedPath;
+						return;
+					}
+
+					reportPathTextBox.Text = folderDialog.SelectedPath;
 				}
 			}
 		}
@@ -54,6 +64,8 @@ namespace ReportExporter
 			{
 				SettingsManager.Instance.Save(SettingsManager.FOLDER_SCAN_PATH_SETTING_KEY, folderPathTextBox.Text);
 				_folderPathSettingCurrentValue = folderPathTextBox.Text;
+				SettingsManager.Instance.Save(SettingsManager.FOLDER_SAVE_PATH_SETTING_KEY, reportPathTextBox.Text);
+				_reportPathSettingCurrentValue = reportPathTextBox.Text;
 				SaveButton.Enabled = false;
 				Close();
 			} 

@@ -73,8 +73,8 @@
   <ItemGroup>
     <Compile Include="Managers\SettingsManager.cs" />
     <Compile Include="Models\Cards.cs" />
-    <Compile Include="Models\InputFile.cs" />
-    <Compile Include="Models\InputFileStateEnum.cs" />
+    <Compile Include="Handlers\InputFile.cs" />
+    <Compile Include="Handlers\InputFileStateEnum.cs" />
     <Compile Include="Handlers\FileHandler.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -83,6 +83,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\CSVUserData.cs" />
+    <Compile Include="Models\Report.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Card.cs" />
     <Compile Include="Program.cs" />

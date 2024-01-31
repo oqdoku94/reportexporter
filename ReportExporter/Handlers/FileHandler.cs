@@ -69,11 +69,13 @@ namespace ReportExporter.Handlers
 
 		private void AddFileSystemWatcher()
 		{
+			if (!Directory.Exists(_folderToScan))
+				return;
+
 			_watcher = new FileSystemWatcher(_folderToScan);
 			_watcher.Created += OnCreated;
 			_watcher.Deleted += OnDeleted;
 			_watcher.Renamed += OnRenamed; ;
-			//_watcher.Changed += OnChanged;
 
 			_watcher.EnableRaisingEvents = true;
 		}
@@ -129,14 +131,17 @@ namespace ReportExporter.Handlers
 			var resultObj = HandleFile(file);
 
 			if (resultObj.Any())
-				return new Tuple<int, string>(resultObj.Count(), JsonConvert.SerializeObject(resultObj));
+			{
+				var report = new Report<User> { Records = resultObj };
+				return new Tuple<int, string>(report.Records.Count(), JsonConvert.SerializeObject(report));
+			}
 
 			return null;
 		}
 
-		private IEnumerable<Models.User> HandleFile(InputFile file)
+		private List<Models.User> HandleFile(InputFile file)
 		{
-			IEnumerable<Models.User> users = Enumerable.Empty<Models.User>();
+			List<Models.User> users = new List<Models.User>();
 
 			try
 			{
@@ -154,16 +159,16 @@ namespace ReportExporter.Handlers
 			catch
 			{
 				file.State = InputFileStateEnum.Failed;
-				return Enumerable.Empty<Models.User>();
+				return new List<Models.User>();
 			}
 
 			return users;
 		}
 
-		private IEnumerable<Models.User> HandleXml(InputFile file)
+		private List<Models.User> HandleXml(InputFile file)
 		{
 			if (!File.Exists(file.Path))
-				return Enumerable.Empty<Models.User>();
+				return new List<Models.User>();
 
 			var xmlObj = Serializer.DeserializeXml<Cards>(file.Path);
 			var cards = xmlObj.CardList.ToDictionary(keyValue => keyValue.UserId);
@@ -227,10 +232,10 @@ namespace ReportExporter.Handlers
 			return users;
 		}
 
-		private IEnumerable<Models.User> HandleCsv(InputFile file)
+		private List<Models.User> HandleCsv(InputFile file)
 		{
 			if (!File.Exists(file.Path))
-				return Enumerable.Empty<Models.User>();
+				return new List<Models.User>();
 
 			var csvObjs = Serializer.DeserializeCSV(file.Path);
 			var scvUserData = csvObjs.ToDictionary(obj => obj[0]);

@@ -6,6 +6,7 @@ namespace ReportExporter.Managers
 	internal class SettingsManager
 	{
 		public const string FOLDER_SCAN_PATH_SETTING_KEY = "FOLDER_PATH";
+		public const string FOLDER_SAVE_PATH_SETTING_KEY = "SAVE_PATH";
 
 		private readonly Configuration _configuration;
 

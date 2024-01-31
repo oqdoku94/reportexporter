@@ -111,6 +111,8 @@
 			// InputFileWorker
 			// 
 			this.InputFileWorker.WorkerSupportsCancellation = true;
+			this.InputFileWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.InputFileWorker_DoWork);
+			this.InputFileWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.InputFileWorker_RunWorkerCompleted);
 			// 
 			// MainForm
 			// 
@@ -129,6 +131,7 @@
 			this.MinimizeBox = false;
 			this.Name = "MainForm";
 			this.Text = "Report Exporter";
+			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
 			this.ResumeLayout(false);
