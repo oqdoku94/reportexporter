@@ -18,15 +18,15 @@ namespace ReportExporter
 
 		private void SettingsForm_Load(object sender, EventArgs e)
 		{
-			folderPathTextBox.Text = _folderPathSettingCurrentValue;
-			folderPathTextBox.TextChanged += InputTextChanged;
-			reportPathTextBox.Text = _reportPathSettingCurrentValue;
-			reportPathTextBox.TextChanged += InputTextChanged;
+			PathToScanTextBox.Text = _folderPathSettingCurrentValue;
+			PathToScanTextBox.TextChanged += InputTextChanged;
+			PathToSaveTextBox.Text = _reportPathSettingCurrentValue;
+			PathToSaveTextBox.TextChanged += InputTextChanged;
 		}
 
 		private void InputTextChanged(object sender, EventArgs e)
 		{
-			if (folderPathTextBox.Text != _folderPathSettingCurrentValue || reportPathTextBox.Text != _reportPathSettingCurrentValue)
+			if (PathToScanTextBox.Text != _folderPathSettingCurrentValue || PathToSaveTextBox.Text != _reportPathSettingCurrentValue)
 			{
 				SaveButton.Enabled = true;
 				return;
@@ -40,15 +40,15 @@ namespace ReportExporter
 			using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
 			{
 				DialogResult result = folderDialog.ShowDialog();
-				if (result == DialogResult.OK) // Test result.
+				if (result == DialogResult.OK)
 				{
-					if (sender == selectPathButton)
+					if (sender == SelectPathToScanButton)
 					{
-						folderPathTextBox.Text = folderDialog.SelectedPath;
+						PathToScanTextBox.Text = folderDialog.SelectedPath;
 						return;
 					}
 
-					reportPathTextBox.Text = folderDialog.SelectedPath;
+					PathToSaveTextBox.Text = folderDialog.SelectedPath;
 				}
 			}
 		}
@@ -62,10 +62,10 @@ namespace ReportExporter
 		{
 			try
 			{
-				SettingsManager.Instance.Save(SettingsManager.FOLDER_SCAN_PATH_SETTING_KEY, folderPathTextBox.Text);
-				_folderPathSettingCurrentValue = folderPathTextBox.Text;
-				SettingsManager.Instance.Save(SettingsManager.FOLDER_SAVE_PATH_SETTING_KEY, reportPathTextBox.Text);
-				_reportPathSettingCurrentValue = reportPathTextBox.Text;
+				SettingsManager.Instance.Save(SettingsManager.FOLDER_SCAN_PATH_SETTING_KEY, PathToScanTextBox.Text);
+				_folderPathSettingCurrentValue = PathToScanTextBox.Text;
+				SettingsManager.Instance.Save(SettingsManager.FOLDER_SAVE_PATH_SETTING_KEY, PathToSaveTextBox.Text);
+				_reportPathSettingCurrentValue = PathToSaveTextBox.Text;
 				SaveButton.Enabled = false;
 				Close();
 			} 

@@ -28,31 +28,31 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.label1 = new System.Windows.Forms.Label();
-			this.folderPathTextBox = new System.Windows.Forms.TextBox();
+			this.PathToScanLabel = new System.Windows.Forms.Label();
+			this.PathToScanTextBox = new System.Windows.Forms.TextBox();
 			this.SaveButton = new System.Windows.Forms.Button();
 			this.CloseButton = new System.Windows.Forms.Button();
-			this.selectPathButton = new System.Windows.Forms.Button();
-			this.reportPathTextBox = new System.Windows.Forms.TextBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.SelectReportPathButton = new System.Windows.Forms.Button();
+			this.SelectPathToScanButton = new System.Windows.Forms.Button();
+			this.PathToSaveTextBox = new System.Windows.Forms.TextBox();
+			this.PathToSaveLabel = new System.Windows.Forms.Label();
+			this.SelectPathToSaveButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
-			// label1
+			// PathToScanLabel
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(13, 13);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(91, 13);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Path to input files:";
+			this.PathToScanLabel.AutoSize = true;
+			this.PathToScanLabel.Location = new System.Drawing.Point(13, 13);
+			this.PathToScanLabel.Name = "PathToScanLabel";
+			this.PathToScanLabel.Size = new System.Drawing.Size(91, 13);
+			this.PathToScanLabel.TabIndex = 0;
+			this.PathToScanLabel.Text = "Path to input files:";
 			// 
-			// folderPathTextBox
+			// PathToScanTextBox
 			// 
-			this.folderPathTextBox.Location = new System.Drawing.Point(12, 29);
-			this.folderPathTextBox.Name = "folderPathTextBox";
-			this.folderPathTextBox.Size = new System.Drawing.Size(232, 20);
-			this.folderPathTextBox.TabIndex = 1;
+			this.PathToScanTextBox.Location = new System.Drawing.Point(12, 29);
+			this.PathToScanTextBox.Name = "PathToScanTextBox";
+			this.PathToScanTextBox.Size = new System.Drawing.Size(232, 20);
+			this.PathToScanTextBox.TabIndex = 1;
 			// 
 			// SaveButton
 			// 
@@ -75,57 +75,57 @@
 			this.CloseButton.UseVisualStyleBackColor = true;
 			this.CloseButton.Click += new System.EventHandler(this.CloseButton_Click);
 			// 
-			// selectPathButton
+			// SelectPathToScanButton
 			// 
-			this.selectPathButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.selectPathButton.Location = new System.Drawing.Point(247, 29);
-			this.selectPathButton.Name = "selectPathButton";
-			this.selectPathButton.Size = new System.Drawing.Size(20, 20);
-			this.selectPathButton.TabIndex = 4;
-			this.selectPathButton.Text = "...";
-			this.selectPathButton.UseVisualStyleBackColor = true;
-			this.selectPathButton.Click += new System.EventHandler(this.selectPathButton_Click);
+			this.SelectPathToScanButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.SelectPathToScanButton.Location = new System.Drawing.Point(247, 29);
+			this.SelectPathToScanButton.Name = "SelectPathToScanButton";
+			this.SelectPathToScanButton.Size = new System.Drawing.Size(20, 20);
+			this.SelectPathToScanButton.TabIndex = 4;
+			this.SelectPathToScanButton.Text = "...";
+			this.SelectPathToScanButton.UseVisualStyleBackColor = true;
+			this.SelectPathToScanButton.Click += new System.EventHandler(this.selectPathButton_Click);
 			// 
-			// reportPathTextBox
+			// PathToSaveTextBox
 			// 
-			this.reportPathTextBox.Location = new System.Drawing.Point(12, 79);
-			this.reportPathTextBox.Name = "reportPathTextBox";
-			this.reportPathTextBox.Size = new System.Drawing.Size(232, 20);
-			this.reportPathTextBox.TabIndex = 5;
+			this.PathToSaveTextBox.Location = new System.Drawing.Point(12, 79);
+			this.PathToSaveTextBox.Name = "PathToSaveTextBox";
+			this.PathToSaveTextBox.Size = new System.Drawing.Size(232, 20);
+			this.PathToSaveTextBox.TabIndex = 5;
 			// 
-			// label2
+			// PathToSaveLabel
 			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(13, 63);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(103, 13);
-			this.label2.TabIndex = 6;
-			this.label2.Text = "Path to report folder:";
+			this.PathToSaveLabel.AutoSize = true;
+			this.PathToSaveLabel.Location = new System.Drawing.Point(13, 63);
+			this.PathToSaveLabel.Name = "PathToSaveLabel";
+			this.PathToSaveLabel.Size = new System.Drawing.Size(103, 13);
+			this.PathToSaveLabel.TabIndex = 6;
+			this.PathToSaveLabel.Text = "Path to report folder:";
 			// 
-			// SelectReportPathButton
+			// SelectPathToSaveButton
 			// 
-			this.SelectReportPathButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.SelectReportPathButton.Location = new System.Drawing.Point(247, 79);
-			this.SelectReportPathButton.Name = "SelectReportPathButton";
-			this.SelectReportPathButton.Size = new System.Drawing.Size(20, 20);
-			this.SelectReportPathButton.TabIndex = 7;
-			this.SelectReportPathButton.Text = "...";
-			this.SelectReportPathButton.UseVisualStyleBackColor = true;
-			this.SelectReportPathButton.Click += new System.EventHandler(this.selectPathButton_Click);
+			this.SelectPathToSaveButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.SelectPathToSaveButton.Location = new System.Drawing.Point(247, 79);
+			this.SelectPathToSaveButton.Name = "SelectPathToSaveButton";
+			this.SelectPathToSaveButton.Size = new System.Drawing.Size(20, 20);
+			this.SelectPathToSaveButton.TabIndex = 7;
+			this.SelectPathToSaveButton.Text = "...";
+			this.SelectPathToSaveButton.UseVisualStyleBackColor = true;
+			this.SelectPathToSaveButton.Click += new System.EventHandler(this.selectPathButton_Click);
 			// 
 			// SettingsForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(280, 157);
-			this.Controls.Add(this.SelectReportPathButton);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.reportPathTextBox);
-			this.Controls.Add(this.selectPathButton);
+			this.Controls.Add(this.SelectPathToSaveButton);
+			this.Controls.Add(this.PathToSaveLabel);
+			this.Controls.Add(this.PathToSaveTextBox);
+			this.Controls.Add(this.SelectPathToScanButton);
 			this.Controls.Add(this.CloseButton);
 			this.Controls.Add(this.SaveButton);
-			this.Controls.Add(this.folderPathTextBox);
-			this.Controls.Add(this.label1);
+			this.Controls.Add(this.PathToScanTextBox);
+			this.Controls.Add(this.PathToScanLabel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -142,13 +142,13 @@
 
 		#endregion
 
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.TextBox folderPathTextBox;
+		private System.Windows.Forms.Label PathToScanLabel;
+		private System.Windows.Forms.TextBox PathToScanTextBox;
 		private System.Windows.Forms.Button SaveButton;
 		private System.Windows.Forms.Button CloseButton;
-		private System.Windows.Forms.Button selectPathButton;
-		private System.Windows.Forms.TextBox reportPathTextBox;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Button SelectReportPathButton;
+		private System.Windows.Forms.Button SelectPathToScanButton;
+		private System.Windows.Forms.TextBox PathToSaveTextBox;
+		private System.Windows.Forms.Label PathToSaveLabel;
+		private System.Windows.Forms.Button SelectPathToSaveButton;
 	}
 }

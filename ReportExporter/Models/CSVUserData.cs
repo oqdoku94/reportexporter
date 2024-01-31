@@ -1,4 +1,4 @@
-﻿namespace ReportExporter.Model
+﻿namespace ReportExporter.Models
 {
 	public class CSVUserData
 	{

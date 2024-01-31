@@ -1,4 +1,4 @@
-﻿namespace ReportExporter.Utils
+﻿namespace ReportExporter.Handlers
 {
 	internal class InputFile
 	{

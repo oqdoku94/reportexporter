@@ -7,15 +7,6 @@
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				components?.Dispose();
-			}
-			base.Dispose(disposing);
-		}
-
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -23,28 +14,28 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+			this.MainMenu = new System.Windows.Forms.MenuStrip();
 			this.FileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.FileCloseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.SettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.FileLoggerListBox = new System.Windows.Forms.ListBox();
 			this.ExportButton = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.RecordsCountLabel = new System.Windows.Forms.Label();
+			this.ReportCountTitleLabel = new System.Windows.Forms.Label();
+			this.ReportCountLabel = new System.Windows.Forms.Label();
 			this.InputFileWorker = new System.ComponentModel.BackgroundWorker();
-			this.menuStrip1.SuspendLayout();
+			this.MainMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// menuStrip1
+			// MainMenu
 			// 
-			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.MainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileMenuItem,
             this.SettingsMenuItem});
-			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(551, 24);
-			this.menuStrip1.TabIndex = 0;
-			this.menuStrip1.Text = "menuStrip1";
+			this.MainMenu.Location = new System.Drawing.Point(0, 0);
+			this.MainMenu.Name = "MainMenu";
+			this.MainMenu.Size = new System.Drawing.Size(551, 24);
+			this.MainMenu.TabIndex = 0;
+			this.MainMenu.Text = "MainMenu";
 			// 
 			// FileMenuItem
 			// 
@@ -87,26 +78,26 @@
 			this.ExportButton.UseVisualStyleBackColor = true;
 			this.ExportButton.Click += new System.EventHandler(this.ExportButton_Click);
 			// 
-			// label1
+			// ReportCountTitleLabel
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(12, 240);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(80, 13);
-			this.label1.TabIndex = 3;
-			this.label1.Text = "Records found:";
-			this.label1.Visible = false;
+			this.ReportCountTitleLabel.AutoSize = true;
+			this.ReportCountTitleLabel.Location = new System.Drawing.Point(12, 240);
+			this.ReportCountTitleLabel.Name = "ReportCountTitleLabel";
+			this.ReportCountTitleLabel.Size = new System.Drawing.Size(80, 13);
+			this.ReportCountTitleLabel.TabIndex = 3;
+			this.ReportCountTitleLabel.Text = "Records found:";
+			this.ReportCountTitleLabel.Visible = false;
 			// 
-			// RecordsCountLabel
+			// ReportCountLabel
 			// 
-			this.RecordsCountLabel.AutoSize = true;
-			this.RecordsCountLabel.ForeColor = System.Drawing.Color.Black;
-			this.RecordsCountLabel.Location = new System.Drawing.Point(89, 240);
-			this.RecordsCountLabel.Name = "RecordsCountLabel";
-			this.RecordsCountLabel.Size = new System.Drawing.Size(13, 13);
-			this.RecordsCountLabel.TabIndex = 4;
-			this.RecordsCountLabel.Text = "0";
-			this.RecordsCountLabel.Visible = false;
+			this.ReportCountLabel.AutoSize = true;
+			this.ReportCountLabel.ForeColor = System.Drawing.Color.Black;
+			this.ReportCountLabel.Location = new System.Drawing.Point(89, 240);
+			this.ReportCountLabel.Name = "ReportCountLabel";
+			this.ReportCountLabel.Size = new System.Drawing.Size(13, 13);
+			this.ReportCountLabel.TabIndex = 4;
+			this.ReportCountLabel.Text = "0";
+			this.ReportCountLabel.Visible = false;
 			// 
 			// InputFileWorker
 			// 
@@ -119,34 +110,34 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(551, 270);
-			this.Controls.Add(this.RecordsCountLabel);
-			this.Controls.Add(this.label1);
+			this.Controls.Add(this.ReportCountLabel);
+			this.Controls.Add(this.ReportCountTitleLabel);
 			this.Controls.Add(this.ExportButton);
 			this.Controls.Add(this.FileLoggerListBox);
-			this.Controls.Add(this.menuStrip1);
+			this.Controls.Add(this.MainMenu);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.MainMenuStrip = this.menuStrip1;
+			this.MainMenuStrip = this.MainMenu;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "MainForm";
 			this.Text = "Report Exporter";
 			this.Load += new System.EventHandler(this.MainForm_Load);
-			this.menuStrip1.ResumeLayout(false);
-			this.menuStrip1.PerformLayout();
+			this.MainMenu.ResumeLayout(false);
+			this.MainMenu.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
 		}
 
-		private System.Windows.Forms.MenuStrip menuStrip1;
+		private System.Windows.Forms.MenuStrip MainMenu;
 		private System.Windows.Forms.ToolStripMenuItem FileMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem SettingsMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem FileCloseMenuItem;
 		private System.Windows.Forms.ListBox FileLoggerListBox;
 		private System.Windows.Forms.Button ExportButton;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label RecordsCountLabel;
+		private System.Windows.Forms.Label ReportCountTitleLabel;
+		private System.Windows.Forms.Label ReportCountLabel;
 		private System.ComponentModel.BackgroundWorker InputFileWorker;
 	}
 }

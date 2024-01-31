@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace ReportExporter.Model
+namespace ReportExporter.Models
 {
 	[XmlRoot("Card")]
 	public class Card

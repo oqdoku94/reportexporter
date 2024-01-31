@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace ReportExporter
 {
-	public partial class MainForm : Form, IDisposable
+	public partial class MainForm : Form
 	{
 		private FileHandler _fileHandler;
 		private string _currentJsonReport;
@@ -26,15 +26,15 @@ namespace ReportExporter
 			{
 				SetVisibleRecordCountLabel(true);
 				ExportButton.Enabled = true;
-				RecordsCountLabel.Text = result.Item1.ToString();
+				ReportCountLabel.Text = result.Item1.ToString();
 				_currentJsonReport = result.Item2;
 			}
 		}
 
 		private void SetVisibleRecordCountLabel(bool isVisible)
 		{
-			label1.Visible = isVisible;
-			RecordsCountLabel.Visible = isVisible;
+			ReportCountTitleLabel.Visible = isVisible;
+			ReportCountLabel.Visible = isVisible;
 		}
 
 		private void InputFileWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -92,11 +92,11 @@ namespace ReportExporter
 			if (!CheckReportPathExists())
 				return;
 
-			var pathToFile = Path.Combine(_pathToReport, DateTime.Now.ToString("ddMMyyyyhhmmssFF") + ".json");
-			File.WriteAllText(pathToFile, _currentJsonReport);
+			var pathToFile = Path.Combine(_pathToReport, DateTime.Now.ToString("ddMMyyyyhhmmssFF"));
+			File.WriteAllText(pathToFile + ".json", _currentJsonReport);
 			ExportButton.Enabled = false;
 			SetVisibleRecordCountLabel(false);
-			RecordsCountLabel.Text = "0";
+			ReportCountLabel.Text = string.Empty;
 			InputFileWorker.RunWorkerAsync();
 		}
 
@@ -171,6 +171,16 @@ namespace ReportExporter
 					UpdateFileHandler();
 				}
 			}
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				components?.Dispose();
+				_fileHandler?.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 	}
 }

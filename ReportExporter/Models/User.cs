@@ -9,10 +9,10 @@ namespace ReportExporter.Models
         public long Pen { get; set; }
         [JsonIgnore]
         public DateTime ExpDate { get; set; }
-        public string FirstName { get; set; }
+		[JsonProperty(nameof(ExpDate))]
+		public string ExpDateString => ExpDate.ToString("dd/MM/yyyy");
+		public string FirstName { get; set; }
         public string LastName { get; set; }   
         public string Phone { get; set; }
-        [JsonProperty(nameof(ExpDate))]
-        public string ExpDateString => ExpDate.ToString("dd/MM/yyyy");
     }
 }

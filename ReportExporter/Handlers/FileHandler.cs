@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using ReportExporter.Models;
-using ReportExporter.Utils;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using System.Linq;
 
 namespace ReportExporter.Handlers
 {
-	internal class FileHandler
+	internal class FileHandler : IDisposable
 	{
 		private const string XML_FILE_EXTENSION = ".xml";
 		private const string CSV_FILE_EXTENSION = ".csv";
@@ -293,6 +292,11 @@ namespace ReportExporter.Handlers
 			}
 
 			return users;
+		}
+
+		public void Dispose()
+		{
+			_watcher?.Dispose();
 		}
 	}
 }
