@@ -58,13 +58,13 @@ namespace ReportExporter
 					PrintLog($"Found \"{matches}\" matches.");
 				}
 
-				Thread.Sleep(1000);
-
 				if (result != null)
 				{
 					e.Result = result;
 					break;
 				}
+
+				Thread.Sleep(1000);
 			}
 		}
 
