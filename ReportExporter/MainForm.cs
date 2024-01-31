@@ -2,6 +2,7 @@
 using ReportExporter.Managers;
 using System;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace ReportExporter
@@ -56,6 +57,8 @@ namespace ReportExporter
 					PrintLog($"File: \"{filePath}\" handeled.");
 					PrintLog($"Found \"{matches}\" matches.");
 				}
+
+				Thread.Sleep(1000);
 
 				if (result != null)
 				{
